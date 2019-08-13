@@ -1,11 +1,11 @@
 const express = require("express");
+const cors = require("cors");
 const conn = require("./dbConfig");
 
 const app = express();
+app.use(cors());
 const bodyParser = require("body-parser");
 const PORT = 9000;
-
-
 //connect db
 conn.getConnection(err => {
   if (!err) {
@@ -16,14 +16,13 @@ conn.getConnection(err => {
 });
 
 var auth = require("./app/routes/authroutes");
+var buckets = require("./app/routes/bucketroutes");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
-
-
 app.use("/login", auth);
+app.use("/bucket", buckets);
 
 //Configure Node server to PORT 9000
 app.listen(process.env.PORT || PORT, () => {
