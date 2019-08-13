@@ -1,19 +1,31 @@
 const express = require("express");
-const connection = require("./dbConfig");
-const PORT = 9000;
+const conn = require("./dbConfig");
 
 const app = express();
+const bodyParser = require("body-parser");
+const PORT = 9000;
 
-//Configure Node server to PORT 9000
-app.listen(process.env.PORT || PORT, () => {
-  console.log(`PORT Listening to ${PORT}`);
-});
 
-///Connnect Database
-connection.getConnection(err => {
+//connect db
+conn.getConnection(err => {
   if (!err) {
     console.log("Connected to Database");
   } else {
     console.log(err);
   }
+});
+
+var auth = require("./app/routes/authroutes");
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+
+
+
+app.use("/login", auth);
+
+//Configure Node server to PORT 9000
+app.listen(process.env.PORT || PORT, () => {
+  console.log(`PORT Listening to ${PORT}`);
 });
