@@ -9,4 +9,11 @@ const conn = mysql.createPool({
   database: "todoapp"
 });
 
+conn.getConnection(err => {
+  if (!err) {
+    console.log("Connected to Database");
+  } else {
+    console.log(err);
+  }
+});
 module.exports = conn;
