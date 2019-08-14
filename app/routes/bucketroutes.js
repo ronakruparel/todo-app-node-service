@@ -27,6 +27,7 @@ app.post("/", (req, res) => {
         sql.query(query, (err, res) => {
           if (err) {
             console.log("insert bucket", err.stack);
+            res.status(200).send({ status: 1, message: "Cannot add" });
           } else {
             let query = `INSERT INTO user_bucket_todo SET user_id="${
               userData.user_id
@@ -41,6 +42,33 @@ app.post("/", (req, res) => {
         });
       }
       res.status(200).send({ status: 0, message: "bucket added successfully" });
+    }
+  });
+});
+
+app.get("/", (req, res) => {
+  conn.getConnection((err, sql) => {
+    if (err) {
+      console.log(err.stack);
+      res.status(500).send({ status: 1, message: "Internal Server error" });
+    } else {
+      if (!req.headers.authorization) {
+        res.status(401).send({ status: 1, message: "Unauthorized" });
+      } else {
+        let buff = new Buffer(req.headers.authorization, "base64");
+        let userData = JSON.parse(buff.toString("ascii"));
+        let query = `SELECT * from bucket LEFT JOIN  user_bucket_todo ON bucket.bucket_id = user_bucket_todo.bucket_id WHERE user_id = "${
+          userData.user_id
+        }" `;
+
+        sql.query(query, (err, response) => {
+          if (!err) {
+            res.status(200).send({ status: 0, data: response });
+          } else {
+            res.status(200).send({ status: 1, message: "Cannot get buckets" });
+          }
+        });
+      }
     }
   });
 });
