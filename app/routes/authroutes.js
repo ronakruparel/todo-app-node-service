@@ -25,7 +25,9 @@ app.post("/", (req, res) => {
             //send user details with token
             let buff = new Buffer(JSON.stringify(rows[0]));
             let token = buff.toString("base64");
-            res.status(200).send({ status: 0, data: { user: rows[0], token } });
+            res
+              .status(200)
+              .send({ status: 0, data: { user: rows[0].username, token } });
           } else {
             //No user found
             res.status(200).send({ status: 1, message: "No user found" });
